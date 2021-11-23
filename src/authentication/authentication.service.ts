@@ -1,11 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
 import { UserService } from 'src/users/users.service';
 import RegistrationDto from './dto/registration.dto';
+import { TokenPayload } from './tokenPayload.interface';
+
 const redis = {};
+
 @Injectable()
 export class AuthenticationService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async register(registrationData: RegistrationDto) {
     try {
@@ -31,7 +41,10 @@ export class AuthenticationService {
       await this.verifyOTP(id, plainPassword);
       return user;
     } catch (error) {
-      throw new HttpException('Invalid otp crednetials', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Invalid otp crednetials',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -54,5 +67,13 @@ export class AuthenticationService {
     const otp = now.getTime().toString(36);
     redis[id] = { id, password: otp };
     return otp;
+  }
+
+  getCookieWithJwtToken(id: string) {
+    const payload: TokenPayload = { id };
+    const token = this.jwtService.sign(payload);
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_EXPIRY_TIME',
+    )}`;
   }
 }

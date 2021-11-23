@@ -4,9 +4,11 @@ import {
   HttpCode,
   Post,
   Req,
+  Res,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
+import { Response } from 'express';
+import { UserService } from 'src/users/users.service';
 
 import { AuthenticationService } from './authentication.service';
 import OtpDto from './dto/otp.dto';
@@ -16,7 +18,7 @@ import RequestWithUser from './requestWithUser.interface';
 
 @Controller('auth')
 export class AuthenticationController {
-  constructor(private authService: AuthenticationService) {}
+  constructor(private authService: AuthenticationService, private userService: UserService) {}
 
   @Post('signup')
   signup(@Body() userData: RegistrationDto) {
@@ -26,8 +28,11 @@ export class AuthenticationController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('signin')
-  signin(@Req() req: RequestWithUser) {
-    return req.user;
+  signin(@Req() req: RequestWithUser, @Res() res: Response) {
+    const { user } = req;
+    const cookie = this.authService.getCookieWithJwtToken(user.id);
+    res.setHeader('Set-Cookie', cookie);
+    return res.send(user);
   }
 
   @Post('otp')
