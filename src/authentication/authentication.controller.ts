@@ -8,7 +8,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserService } from 'src/users/users.service';
 
 import { AuthenticationService } from './authentication.service';
 import OtpDto from './dto/otp.dto';
@@ -18,7 +17,7 @@ import RequestWithUser from './requestWithUser.interface';
 
 @Controller('auth')
 export class AuthenticationController {
-  constructor(private authService: AuthenticationService, private userService: UserService) {}
+  constructor(private authService: AuthenticationService) {}
 
   @Post('signup')
   signup(@Body() userData: RegistrationDto) {

@@ -8,6 +8,7 @@ import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LocalStrategy } from './local.strategy';
         },
       }),
     }),
+    MailModule,
   ],
   providers: [AuthenticationService, LocalStrategy, JwtStrategy],
   controllers: [AuthenticationController],

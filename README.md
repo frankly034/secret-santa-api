@@ -24,10 +24,12 @@ This is an API that was built using NestJS. It is a Rest API and can perform all
 <!-- concepts employed -->
 ## Concepts Employed
 * Associations
-* Authentication 
+* Authentication (`cookie` and `jwt`)
 * Foreign Keys
-* Validations
-* Emailing
+* Validations (`Pipes` and `Guards`)
+* Emailing (`nodemailer` and `@nestjs-modules/mailer`)
+* Handlebars Email Templating
+* One time password (`otp`)
 
 <!-- BUILT WITH -->
 ## Built With
