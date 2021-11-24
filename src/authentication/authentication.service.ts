@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
+import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'src/users/users.service';
 import RegistrationDto from './dto/registration.dto';
 import { TokenPayload } from './tokenPayload.interface';
@@ -15,6 +16,7 @@ export class AuthenticationService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registrationData: RegistrationDto) {
@@ -59,6 +61,8 @@ export class AuthenticationService {
   async otp(email: string) {
     let user = await this.userService.getByEmailOrCreate(email);
     const otp = this.generateOtp(user.id);
+    const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${user.id}&otp=${otp}`;
+    await this.mailService.sendUserConfirmation(user.email, url);
     return { id: user.id, password: otp };
   }
 

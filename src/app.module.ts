@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -20,11 +21,16 @@ import { UsersModule } from './users/users.module';
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRY_TIME: Joi.number().required(),
+        MAIL_HOST: Joi.string().required(),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASSWORD: Joi.string().required(),
+        MAIL_SENDER: Joi.string().required(),
       }),
     }),
     DatabaseModule,
     UsersModule,
     AuthenticationModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
