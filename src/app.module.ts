@@ -25,6 +25,9 @@ import { MailModule } from './mail/mail.module';
         MAIL_USER: Joi.string().required(),
         MAIL_PASSWORD: Joi.string().required(),
         MAIL_SENDER: Joi.string().required(),
+        OTP_EXPIRY_TIME: Joi.number().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required()
       }),
     }),
     DatabaseModule,

@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import * as redisStore from 'cache-manager-redis-store';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -24,6 +25,16 @@ import { MailModule } from 'src/mail/mail.module';
           expiresIn: `${configService.get('JWT_EXPIRY_TIME')}s`,
         },
       }),
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get('REDIS_HOST'),
+        port: configService.get('REDIS_PORT'),
+        ttl: configService.get('OTP_EXPIRY_TIME')
+      })
     }),
     MailModule,
   ],

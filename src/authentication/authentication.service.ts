@@ -1,14 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Cache } from 'cache-manager';
 
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
 import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'src/users/users.service';
 import RegistrationDto from './dto/registration.dto';
 import { TokenPayload } from './tokenPayload.interface';
-
-const redis = {};
 
 @Injectable()
 export class AuthenticationService {
@@ -17,6 +22,7 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async register(registrationData: RegistrationDto) {
@@ -38,38 +44,35 @@ export class AuthenticationService {
   }
 
   async getAuthenticatedUser(id: string, plainPassword: string) {
-    try {
-      const user = await this.userService.getById(id);
-      await this.verifyOTP(id, plainPassword);
-      return user;
-    } catch (error) {
-      throw new HttpException(
-        'Invalid otp crednetials',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    await this.verifyOTP(id, plainPassword);
+    const user = await this.userService.getById(id);
+    return user;
   }
 
-  async verifyOTP(id: string, password: string) {
-    const otp = redis[id];
-    if (otp && otp.id === id && otp.password === password) {
-      return true;
-    }
-    throw new HttpException('Invalid otp crednetials', HttpStatus.BAD_REQUEST);
+  private async verifyOTP(id: string, password: string) {
+      const otp = await this.cacheManager.get(id);
+      if(!otp || otp !== password){
+        throw new HttpException(
+          'Invalid otp crednetials',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
   }
 
   async otp(email: string) {
     let user = await this.userService.getByEmailOrCreate(email);
-    const otp = this.generateOtp(user.id);
-    const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${user.id}&otp=${otp}`;
+    const otp = await this.generateOtp(user.id);
+    const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${
+      user.id
+    }&otp=${otp}`;
     await this.mailService.sendUserConfirmation(user.email, url);
     return { id: user.id, password: otp };
   }
 
-  generateOtp(id: string): string {
+  private async generateOtp(id: string): Promise<string> {
     const now = new Date();
     const otp = now.getTime().toString(36);
-    redis[id] = { id, password: otp };
+    await this.cacheManager.set(id, otp, { ttl: this.configService.get('OTP_EXPIRY_TIME') });
     return otp;
   }
 
