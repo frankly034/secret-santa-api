@@ -8,7 +8,6 @@ export class MailService {
 
   async sendUserConfirmation(email: string, url: string) {
     try{
-      console.log('before calling the mailer service')
       await this.mailerService.sendMail({
         to: 'example@example.com',
         subject: 'Welcome to Secret Santa',
