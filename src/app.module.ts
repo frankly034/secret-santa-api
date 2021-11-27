@@ -8,6 +8,9 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { MailModule } from './mail/mail.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { CustomExceptionFilter } from './Exceptions/CustomExceptionFilter';
+import { ResponseFormatInterceptor } from './utils/responseFormat.interceptor';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { MailModule } from './mail/mail.module';
         MAIL_SENDER: Joi.string().required(),
         OTP_EXPIRY_TIME: Joi.number().required(),
         REDIS_HOST: Joi.string().required(),
-        REDIS_PORT: Joi.number().required()
+        REDIS_PORT: Joi.number().required(),
       }),
     }),
     DatabaseModule,
@@ -36,6 +39,16 @@ import { MailModule } from './mail/mail.module';
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseFormatInterceptor,
+    },
+  ],
 })
 export class AppModule {}

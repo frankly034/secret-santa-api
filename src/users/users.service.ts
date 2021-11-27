@@ -1,5 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CustomBadRequestException } from 'src/Exceptions/CustomBadRequestException';
+import { CustomNotFoundException } from 'src/Exceptions/CustomNotFoundException';
 import { Repository } from 'typeorm';
 
 import CreateUserDto from './dto/createUser.dto';
@@ -22,10 +24,10 @@ export class UserService {
     try {
       user = await this.userRepository.findOne({ id });
     } catch (error) {
-      throw new HttpException('Invalid user credentials', HttpStatus.BAD_REQUEST);
+      throw new CustomBadRequestException('Invalid user credentials');
     }
     if(!user){
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new CustomNotFoundException('User not found');
     }
     return user;
   }
@@ -35,7 +37,7 @@ export class UserService {
     if (user) {
       return user;
     }
-    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    throw new CustomNotFoundException('User not found');
   }
 
   async getByEmailOrCreate(email: string) {

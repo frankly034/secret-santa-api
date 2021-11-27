@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
 
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
+import { CustomBadRequestException } from 'src/Exceptions/CustomBadRequestException';
 import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'src/users/users.service';
 import RegistrationDto from './dto/registration.dto';
@@ -31,10 +32,7 @@ export class AuthenticationService {
       return newUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException(
-          'User with emai already exists',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new CustomBadRequestException('User with email already exists');
       }
       throw new HttpException(
         'Something went wrong',
@@ -50,13 +48,10 @@ export class AuthenticationService {
   }
 
   private async verifyOTP(id: string, password: string) {
-      const otp = await this.cacheManager.get(id);
-      if(!otp || otp !== password){
-        throw new HttpException(
-          'Invalid otp crednetials',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+    const otp = await this.cacheManager.get(id);
+    if (!otp || otp !== password) {
+      throw new CustomBadRequestException('Invalid otp crednetials');
+    }
   }
 
   async otp(email: string) {
@@ -72,7 +67,9 @@ export class AuthenticationService {
   private async generateOtp(id: string): Promise<string> {
     const now = new Date();
     const otp = now.getTime().toString(36);
-    await this.cacheManager.set(id, otp, { ttl: this.configService.get('OTP_EXPIRY_TIME') });
+    await this.cacheManager.set(id, otp, {
+      ttl: this.configService.get('OTP_EXPIRY_TIME'),
+    });
     return otp;
   }
 
