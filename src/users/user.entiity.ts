@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import Group from 'src/groups/group.entity';
+import Member from 'src/members/memeber.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
  
 @Entity()
 class User {
@@ -13,6 +15,12 @@ class User {
  
   @Column()
   public lastName: string;
+
+  @OneToMany(() => Group, (group: Group) => group.createdBy)
+  public createdGroups: Group[];
+
+  @OneToMany(() => Member, (member: Member) => member.member)
+  public memberships: Member[];
   
 }
  
