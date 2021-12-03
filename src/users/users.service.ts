@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomBadRequestException } from 'src/Exceptions/CustomBadRequestException';
-import { CustomNotFoundException } from 'src/Exceptions/CustomNotFoundException';
 import { Repository } from 'typeorm';
 
+import { CustomBadRequestException } from 'src/Exceptions/CustomBadRequestException';
+import { CustomNotFoundException } from 'src/Exceptions/CustomNotFoundException';
 import CreateUserDto from './dto/createUser.dto';
 import User from './user.entiity';
 
@@ -14,7 +14,7 @@ export class UserService {
   ) {}
 
   async createUser(userData: CreateUserDto) {
-    const user = await this.userRepository.create(userData);
+    const user = this.userRepository.create(userData);
     const savedUser = await this.userRepository.save(user);
     return savedUser;
   }
@@ -26,7 +26,7 @@ export class UserService {
     } catch (error) {
       throw new CustomBadRequestException('Invalid user credentials');
     }
-    if(!user){
+    if (!user) {
       throw new CustomNotFoundException('User not found');
     }
     return user;
@@ -46,5 +46,14 @@ export class UserService {
       user = await this.createUser({ email, firstName: '', lastName: '' });
     }
     return user;
+  }
+
+  async getUserMemberships(user: User) {
+    const { id } = user;
+    const fetchedUser = await this.userRepository.findOne(
+      { id },
+      { relations: ['memberships', 'memberships.group', 'memberships.invitedBy', 'memberships.member'] },
+    );
+    return fetchedUser.memberships;
   }
 }

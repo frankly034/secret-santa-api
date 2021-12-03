@@ -11,6 +11,7 @@ import { MailModule } from './mail/mail.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { CustomExceptionFilter } from './Exceptions/CustomExceptionFilter';
 import { ResponseFormatInterceptor } from './utils/responseFormat.interceptor';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ResponseFormatInterceptor } from './utils/responseFormat.interceptor';
     UsersModule,
     AuthenticationModule,
     MailModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [
