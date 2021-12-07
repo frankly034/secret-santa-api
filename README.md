@@ -9,6 +9,7 @@ This is an API that was built using NestJS. It is a Rest API and can perform all
 * [Built With](#built-with)
 * [Required Installations](#required-installations)
 * [Instalation of This App](#instalation)
+  * [Docker (alternative)](#docker)
 * [Future Improvements](#future-improvements)
 * [License](#license)
 * [Contact](#contact)
@@ -36,6 +37,7 @@ This is an API that was built using NestJS. It is a Rest API and can perform all
 * NestJs
 * Postgres
 * Redis
+* Docker
 
 
 <!-- REQUIRED INSTALLATION -->
@@ -43,6 +45,7 @@ This is an API that was built using NestJS. It is a Rest API and can perform all
 * node
 * postgres
 * redis
+* docker (optional)
 
 <!-- INSTALLATION -->
 ## Installation of This Repository
@@ -73,6 +76,27 @@ To test
 your@pc:~$ npm test
 ```
 
+<!-- DOCKER INSTALLATION -->
+### Docker (alernative)
+```Ensure you have docker desktop installed```
+
+Clone the Repository,
+
+```Shell
+your@pc:~$ git clone https://github.com/frankly034/secret-santa-api.git
+```
+
+Move to the downloaded folder
+
+```Shell
+your@pc:~$ cd secret-santa-api
+```
+
+Run with docker-compose
+
+```Shell
+your@pc:~$ docker-compose up
+```
 
 <!-- FUTURE IMPROVEMENTS -->
 ## Future Improvements
