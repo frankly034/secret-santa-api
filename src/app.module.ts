@@ -1,6 +1,6 @@
 import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -12,6 +12,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { CustomExceptionFilter } from './Exceptions/CustomExceptionFilter';
 import { ResponseFormatInterceptor } from './utils/responseFormat.interceptor';
 import { GroupsModule } from './groups/groups.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -33,6 +34,16 @@ import { GroupsModule } from './groups/groups.module';
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
       }),
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: Number(configService.get('REDIS_PORT')),
+        }
+      })
     }),
     DatabaseModule,
     UsersModule,
