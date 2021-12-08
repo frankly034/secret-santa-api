@@ -6,36 +6,45 @@ import { CreateMemberDto } from './dto/createMember.dto';
 import Member from './memeber.entity';
 import { UserService } from 'src/users/users.service';
 import { CreateMembersDto } from './dto/createMenbers.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class MembersService {
   constructor(
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     private readonly userService: UserService,
+    private readonly mailService: MailService,
   ) {}
 
   private async createMember(memberData: CreateMemberDto) {
+    const {member, invitedBy, group} = memberData;
     const createdMember = this.memberRepository.create(memberData);
     const savedMember = await this.memberRepository.save(createdMember);
+    await this.mailService.queueInvitationMail(member, invitedBy, group);
     return savedMember;
   }
 
   async createMembers(membersData: CreateMembersDto) {
+    let members = [];
     const { emails, invitedBy, group } = membersData;
     const updatedEmails = [...new Set([...emails, invitedBy.email])];
     const users = await Promise.all(
       updatedEmails.map((email) => this.userService.getByEmailOrCreate(email)),
     );
-    const members = await Promise.all(
-      users.map((user) =>
-        this.createMember({
-          isAdmin: invitedBy.email === user.email,
-          member: user,
-          invitedBy,
-          group,
-        }),
-      ),
-    );
+    try {
+      members = await Promise.all(
+        users.map((user) =>
+          this.createMember({
+            isAdmin: invitedBy.email === user.email,
+            member: user,
+            invitedBy,
+            group,
+          }),
+        ),
+      );
+    } catch (error){
+      console.log('Error creating members', error)
+    }
     return members;
   }
 }
