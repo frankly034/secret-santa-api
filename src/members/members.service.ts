@@ -7,6 +7,8 @@ import Member from './memeber.entity';
 import { UserService } from 'src/users/users.service';
 import { CreateMembersDto } from './dto/createMenbers.dto';
 import { MailService } from 'src/mail/mail.service';
+import User from 'src/users/user.entiity';
+import { MembershipStatus } from './memeber.entity';
 
 @Injectable()
 export class MembersService {
@@ -17,7 +19,7 @@ export class MembersService {
   ) {}
 
   private async createMember(memberData: CreateMemberDto) {
-    const {member, invitedBy, group} = memberData;
+    const { member, invitedBy, group } = memberData;
     const createdMember = this.memberRepository.create(memberData);
     const savedMember = await this.memberRepository.save(createdMember);
     await this.mailService.queueInvitationMail(member, invitedBy, group);
@@ -42,9 +44,30 @@ export class MembersService {
           }),
         ),
       );
-    } catch (error){
-      console.log('Error creating members', error)
+    } catch (error) {
+      console.log('Error creating members', error);
     }
     return members;
+  }
+
+  async getUserGroupMembership(groupId: string, member: User) {
+    const membership = await this.memberRepository.findOne(
+      { group: { id: groupId }, member },
+      { relations: ['member', 'invitedBy', 'group'] },
+    );
+    return membership;
+  }
+
+  async activate(member: Member) {
+    if (member.status === MembershipStatus.INACTIVE) {
+      await this.memberRepository.update(
+        { id: member.id },
+        { status: MembershipStatus.ACTIVE },
+      );
+      return await this.memberRepository.findOne(member.id, {
+        relations: ['member', 'invitedBy', 'group'],
+      });
+    }
+    return member;
   }
 }
