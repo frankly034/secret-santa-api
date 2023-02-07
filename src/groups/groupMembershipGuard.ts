@@ -11,7 +11,8 @@ export class GroupMembershipGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const {
-      params: { id }, user,
+      params: { id },
+      user,
     } = request;
     return this.memberService
       .getUserGroupMembership(id, user)
@@ -19,7 +20,7 @@ export class GroupMembershipGuard implements CanActivate {
         request.member = member;
         return !!member;
       })
-      .catch((error) => {
+      .catch(() => {
         return false;
       });
   }

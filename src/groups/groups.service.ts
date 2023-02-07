@@ -48,7 +48,7 @@ export class GroupsService {
     return newGroup;
   }
 
-  async getMemberships(authUser: User){
-    return this.userService.getUserMemberships(authUser)
+  async getMemberships(authUser: User) {
+    return this.userService.getUserMemberships(authUser);
   }
 }

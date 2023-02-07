@@ -33,20 +33,25 @@ export class MailService {
     const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${
       invitee.id
     }&group=${group.id}`;
-    const {firstName, email, lastName} = createdBy;
+    const { firstName, email, lastName } = createdBy;
     try {
       await this.mailingQueue.add('mailing', {
         invitee: invitee.email,
-        createdBy: firstName || lastName ?`${firstName} ${lastName}` : email,
+        createdBy: firstName || lastName ? `${firstName} ${lastName}` : email,
         group: group.title,
         url,
       });
-    } catch(error) {
-      console.log('Error queueing invite', error)
+    } catch (error) {
+      console.log('Error queueing invite', error);
     }
   }
 
-  async sendGroupInvitation(invitee: string, createdBy: string, group: string, url: string) {
+  async sendGroupInvitation(
+    invitee: string,
+    createdBy: string,
+    group: string,
+    url: string,
+  ) {
     try {
       await this.mailerService.sendMail({
         to: invitee,

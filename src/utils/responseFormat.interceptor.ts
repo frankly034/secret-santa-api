@@ -14,14 +14,12 @@ export class ResponseFormatInterceptor implements NestInterceptor {
     const hostContext = context.switchToHttp();
     const response = hostContext.getResponse<Response>();
 
-    return next
-      .handle()
-      .pipe(
-        map((value) => ({
-          statusCode: response.statusCode,
-          message: [response.statusMessage || "Success"],
-          data: value,
-        })),
-      );
+    return next.handle().pipe(
+      map((value) => ({
+        statusCode: response.statusCode,
+        message: [response.statusMessage || 'Success'],
+        data: value,
+      })),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request } from 'express';
 import User from '../users/user.entiity';
 
 interface RequestWithUser extends Request {

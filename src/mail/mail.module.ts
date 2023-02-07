@@ -10,7 +10,7 @@ import { MailService } from './mail.service';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: 'mailing'}),
+    BullModule.registerQueue({ name: 'mailing' }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

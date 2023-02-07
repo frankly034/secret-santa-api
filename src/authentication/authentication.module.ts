@@ -33,8 +33,8 @@ import { MailModule } from 'src/mail/mail.module';
         store: redisStore,
         host: configService.get('REDIS_HOST'),
         port: configService.get('REDIS_PORT'),
-        ttl: configService.get('OTP_EXPIRY_TIME')
-      })
+        ttl: configService.get('OTP_EXPIRY_TIME'),
+      }),
     }),
     MailModule,
   ],

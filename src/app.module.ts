@@ -42,8 +42,8 @@ import { BullModule } from '@nestjs/bull';
         redis: {
           host: configService.get('REDIS_HOST'),
           port: Number(configService.get('REDIS_PORT')),
-        }
-      })
+        },
+      }),
     }),
     DatabaseModule,
     UsersModule,

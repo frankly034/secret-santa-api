@@ -1,6 +1,6 @@
-import Group from "src/groups/group.entity";
-import User from "src/users/user.entiity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import Group from 'src/groups/group.entity';
+import User from 'src/users/user.entiity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum GiftStatus {
   PENDING = 'pending',
@@ -42,7 +42,6 @@ class Member {
 
   @ManyToOne(() => Group, (group: Group) => group)
   public group: Group;
-
 }
 
 export default Member;
