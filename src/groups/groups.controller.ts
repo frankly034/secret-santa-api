@@ -43,7 +43,7 @@ export class GroupsController {
   @Post(':id/activate')
   @UseGuards(GroupMembershipGuard)
   @HttpCode(200)
-  async getGroup(@Param('id') _: string, @Req() req: RequestWithMembership) {
+  async getGroup(@Req() req: RequestWithMembership) {
     const { member } = req;
     return this.memberService.activate(member);
   }

@@ -21,6 +21,23 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+  pgadmin4:
+    container_name: pgadmin4
+    links:
+      - postgres:webnet
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    volumes:
+      - /data/pgadmin:/root/.pgadmin
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    networks:
+      - webnet
   main:
     container_name: main
     build:
