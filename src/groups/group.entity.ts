@@ -1,7 +1,13 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import User from "src/users/user.entiity";
-import Member from "src/members/memeber.entity";
+import User from 'src/users/user.entiity';
+import Member from 'src/members/memeber.entity';
 
 @Entity()
 class Group {
@@ -15,8 +21,7 @@ class Group {
   public createdBy: User;
 
   @OneToMany(() => Member, (member: Member) => member.group)
-  public members: Member[]
-
+  public members: Member[];
 }
 
 export default Group;

@@ -1,5 +1,5 @@
-import Group from "src/groups/group.entity";
-import User from "src/users/user.entiity";
+import Group from 'src/groups/group.entity';
+import User from 'src/users/user.entiity';
 
 export class CreateMemberDto {
   isAdmin: boolean;

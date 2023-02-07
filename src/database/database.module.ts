@@ -1,12 +1,12 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [ ConfigModule ],
-      inject: [ ConfigService ],
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
@@ -17,8 +17,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         entities: [__dirname + '/../**/*.entity.ts'],
         synchronize: true,
         autoLoadEntities: true,
-      })
-    })
-  ]
+      }),
+    }),
+  ],
 })
 export class DatabaseModule {}

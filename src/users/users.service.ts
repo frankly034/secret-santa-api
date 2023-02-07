@@ -52,7 +52,14 @@ export class UserService {
     const { id } = user;
     const fetchedUser = await this.userRepository.findOne(
       { id },
-      { relations: ['memberships', 'memberships.group', 'memberships.invitedBy', 'memberships.member'] },
+      {
+        relations: [
+          'memberships',
+          'memberships.group',
+          'memberships.invitedBy',
+          'memberships.member',
+        ],
+      },
     );
     return fetchedUser.memberships;
   }

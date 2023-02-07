@@ -55,7 +55,7 @@ export class AuthenticationService {
   }
 
   async otp(email: string) {
-    let user = await this.userService.getByEmailOrCreate(email);
+    const user = await this.userService.getByEmailOrCreate(email);
     const otp = await this.generateOtp(user.id);
     const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${
       user.id

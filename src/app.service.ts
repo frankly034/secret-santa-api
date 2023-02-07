@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 export class AppService {
   get(): any {
     return {
-      message: "Secret Santa API"
+      message: 'Secret Santa API',
     };
   }
 }

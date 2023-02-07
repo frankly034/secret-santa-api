@@ -20,16 +20,22 @@ import { MembersService } from 'src/members/members.service';
 @Controller('groups')
 @UseGuards(JwtAuthenticationGuard)
 export class GroupsController {
-  constructor(private readonly groupService: GroupsService, private readonly memberService: MembersService) {}
+  constructor(
+    private readonly groupService: GroupsService,
+    private readonly memberService: MembersService,
+  ) {}
 
   @Get('memberships')
-  getUserMemberShips(@Req() req: RequestWithUser){
+  getUserMemberShips(@Req() req: RequestWithUser) {
     const { user } = req;
     return this.groupService.getMemberships(user);
   }
 
   @Post()
-  createGroupMember(@Body() memberData: createGroupDto, @Req() req: RequestWithUser) {
+  createGroupMember(
+    @Body() memberData: createGroupDto,
+    @Req() req: RequestWithUser,
+  ) {
     const { user } = req;
     return this.groupService.createGroup(memberData, user);
   }
@@ -37,7 +43,7 @@ export class GroupsController {
   @Post(':id/activate')
   @UseGuards(GroupMembershipGuard)
   @HttpCode(200)
-  async getGroup(@Param('id') _: string, @Req() req: RequestWithMembership){
+  async getGroup(@Param('id') _: string, @Req() req: RequestWithMembership) {
     const { member } = req;
     return this.memberService.activate(member);
   }

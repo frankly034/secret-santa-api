@@ -18,8 +18,8 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.get()).toEqual(
         expect.objectContaining({
-          message: expect.any(String)
-        })
+          message: expect.any(String),
+        }),
       );
     });
   });

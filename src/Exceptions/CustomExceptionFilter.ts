@@ -16,7 +16,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     let errorObj = {};
     if (typeof message === 'string') {
-      errorObj = { statusCode: status, message: [message], error: message,  };
+      errorObj = { statusCode: status, message: [message], error: message };
     } else {
       errorObj = { ...message };
     }
