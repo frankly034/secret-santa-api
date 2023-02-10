@@ -16,6 +16,8 @@ import { createGroupDto } from './dto/createGroup.dto';
 import { GroupsService } from './groups.service';
 import { GroupMembershipGuard } from './groupMembershipGuard';
 import { MembersService } from 'src/members/members.service';
+import { GroupAdminGuard } from './groupAdminGuard';
+import { findByIdParam } from './dto/findByIdParam.dto';
 
 @Controller('groups')
 @UseGuards(JwtAuthenticationGuard)
@@ -43,8 +45,22 @@ export class GroupsController {
   @Post(':id/activate')
   @UseGuards(GroupMembershipGuard)
   @HttpCode(200)
-  async getGroup(@Req() req: RequestWithMembership) {
+  async activateGroupMembership(@Req() req: RequestWithMembership) {
     const { member } = req;
     return this.memberService.activate(member);
+  }
+
+  @Post(':id/match')
+  @UseGuards(GroupAdminGuard)
+  @HttpCode(200)
+  async match(@Param() { id }: findByIdParam) {
+    return this.groupService.match(id);
+  }
+
+  @Get(':id')
+  @UseGuards(GroupAdminGuard)
+  @HttpCode(200)
+  async getGroup(@Param() { id }: findByIdParam) {
+    return this.groupService.findGroupById(id);
   }
 }

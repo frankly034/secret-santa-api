@@ -60,7 +60,7 @@ export class AuthenticationService {
     const url = `${this.configService.get('FRONTENT_APP_BASEURL')}?id=${
       user.id
     }&otp=${otp}`;
-    await this.mailService.sendUserConfirmation(user.email, url);
+    this.mailService.sendUserConfirmation(user.email, url);
     return { id: user.id, password: otp };
   }
 

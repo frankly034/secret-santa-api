@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -8,6 +8,7 @@ import User from 'src/users/user.entiity';
 import { createGroupDto } from './dto/createGroup.dto';
 import { MembersService } from 'src/members/members.service';
 import { UserService } from 'src/users/users.service';
+import Member from 'src/members/memeber.entity';
 
 @Injectable()
 export class GroupsService {
@@ -22,10 +23,10 @@ export class GroupsService {
     const group = await this.groupRepository.findOne(id, {
       relations: ['createdBy', 'members'],
     });
-    if (group) {
-      return group;
+    if (!group) {
+      throw new CustomNotFoundException('Group not found');
     }
-    throw new CustomNotFoundException('Group not found');
+    return group;
   }
 
   async getGroups(): Promise<Group[]> {
@@ -50,5 +51,37 @@ export class GroupsService {
 
   async getMemberships(authUser: User) {
     return this.userService.getUserMemberships(authUser);
+  }
+
+  private async runMatch(members: Member[]) {
+    let index = 0;
+    const recipients = [...members];
+    while (index < recipients.length) {
+      const randomIndex = Math.floor(Math.random() * members.length);
+      const selectedRecipient = recipients[index];
+      const randomDonor = members[randomIndex];
+
+      if (selectedRecipient.id !== randomDonor.id) {
+        this.memberService.updateDonorRecipient(randomDonor, selectedRecipient);
+        members.splice(randomIndex, 1);
+        index++;
+      }
+    }
+  }
+
+  async match(id: string) {
+    const unmatchedActiveGroupMembers =
+      await this.memberService.getUnmatchedActiveGroupMembers(id);
+
+    if (unmatchedActiveGroupMembers.length <= 1) {
+      throw new HttpException(
+        'Requires more than one unmatched active member to run match',
+        HttpStatus.PRECONDITION_FAILED,
+      );
+    }
+
+    this.runMatch(unmatchedActiveGroupMembers);
+
+    return { message: 'Matching in progress' };
   }
 }
