@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { CreateMemberDto } from './dto/createMember.dto';
 import Member from './memeber.entity';
@@ -58,6 +58,14 @@ export class MembersService {
     return membership;
   }
 
+  async getAdmin(groupId: string) {
+    const admin = await this.memberRepository.findOne({
+      group: { id: groupId },
+      isAdmin: true,
+    });
+    return admin;
+  }
+
   async activate(member: Member) {
     if (member.status === MembershipStatus.INACTIVE) {
       await this.memberRepository.update(
@@ -69,5 +77,23 @@ export class MembersService {
       });
     }
     return member;
+  }
+
+  async getUnmatchedActiveGroupMembers(groupId: string) {
+    const members = await this.memberRepository.find({
+      donor: IsNull(),
+      group: { id: groupId },
+      status: MembershipStatus.ACTIVE,
+    });
+
+    return members;
+  }
+
+  async updateDonorRecipient(donor: Member, recipient: Member) {
+    this.memberRepository.update(
+      { id: donor.id },
+      { recipient: recipient.member },
+    );
+    this.memberRepository.update({ id: recipient.id }, { donor: donor.member });
   }
 }

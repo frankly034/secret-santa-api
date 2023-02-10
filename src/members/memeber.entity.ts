@@ -34,7 +34,9 @@ class Member {
   @Column({ type: 'enum', enum: GiftStatus, default: GiftStatus.PENDING })
   incoming: GiftStatus;
 
-  @ManyToOne(() => User, (user: User) => user)
+  @ManyToOne(() => User, (user: User) => user, {
+    eager: true,
+  })
   public member: User;
 
   @ManyToOne(() => User, (user: User) => user)
@@ -42,6 +44,16 @@ class Member {
 
   @ManyToOne(() => Group, (group: Group) => group)
   public group: Group;
+
+  @ManyToOne(() => User, (user: User) => user, {
+    eager: true,
+  })
+  public donor: User;
+
+  @ManyToOne(() => User, (user: User) => user, {
+    eager: true,
+  })
+  public recipient: User;
 }
 
 export default Member;

@@ -18,7 +18,7 @@ export class MailService {
 
   async sendUserConfirmation(email: string, url: string) {
     try {
-      await this.mailerService.sendMail({
+      this.mailerService.sendMail({
         to: email,
         subject: 'Welcome to Secret Santa',
         template: './confirmation',
@@ -35,7 +35,7 @@ export class MailService {
     }&group=${group.id}`;
     const { firstName, email, lastName } = createdBy;
     try {
-      await this.mailingQueue.add('mailing', {
+      this.mailingQueue.add('mailing', {
         invitee: invitee.email,
         createdBy: firstName || lastName ? `${firstName} ${lastName}` : email,
         group: group.title,
@@ -53,7 +53,7 @@ export class MailService {
     url: string,
   ) {
     try {
-      await this.mailerService.sendMail({
+      this.mailerService.sendMail({
         to: invitee,
         subject: 'Welcome to Secret Santa',
         template: './invite',
